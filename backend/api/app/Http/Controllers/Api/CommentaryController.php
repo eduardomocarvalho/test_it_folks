@@ -19,11 +19,12 @@ class CommentaryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($ticket_id)
     {
         return $this->repository->with(['user'])
+            ->where('ticket_id',$ticket_id)
             ->orderBy('created_at', 'asc')
-            ->all();
+            ->get();
     }
 
     public function store(Request $request)

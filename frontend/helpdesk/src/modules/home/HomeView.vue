@@ -86,7 +86,62 @@
       <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
       :colorStyle="'red'" />
   </div>
-
+  <div v-if="actionStatus === 'show_ticket'" class="boxBodyNewUser">
+    <form>
+      <fieldset >
+        <legend>Data Ticket - {{ formDataTicket.id }}</legend>
+        <div class="form-group">
+          <div class="mb-3">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" :value="formDataTicket.title" disabled>
+          </div>
+          <div class="mb-3">
+            <label>Description:</label>
+            <input type="text" class="form-control" :value="formDataTicket.description" disabled>
+          </div>
+          <div class="mb-3">
+            <label>Category:</label>
+            <input type="text" class="form-control" :value="formDataTicket.category_dsc" disabled>
+          </div>
+          <div class="mb-3">
+            <label>Status:</label>
+            <input class="form-control" type="text" :value="formDataTicket.status_dsc" disabled>
+          </div>
+          <div class="mb-3">
+            <label>Resolution:</label>
+            <input class="form-control" type="text" :value="formDataTicket.resolution" disabled>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <fieldset >
+        <legend>Commentaries</legend>
+      <table class="table">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col" class="styleThTickets">
+                Description
+              </th>
+              <th scope="col" class="styleThTickets">
+                User name
+              </th>
+            </tr>
+            <tr scope='row' v-for="(item, ix) in commentaries" :key="ix" :class="ix % 2 === 0 ? 'thead-light' : ''">
+              <td>
+                <text class="styleTxtTdTickets">{{ item.description }}</text>
+              </td>
+              <td>
+                <text class="styleTxtTdTickets">{{ item.user.name }}</text>
+              </td>
+            </tr>
+          </thead>
+      </table>
+    </fieldset>
+    <br>
+    <button type="submit" :onPress="() => handleAddTickets('list')"  class="btn btn-danger">Cancel</button>
+    <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
+      :colorStyle="'red'" />
+  </div>
   <div v-if="actionStatus === 'close_ticket'" class="boxBodyNewUser">
     <my_input :type_style="'fields_defaut'" :value="formDataTicket.resolution"
       :onChange="(val) => handleInput(val, 'resolution')" :type="'text-area'" :label="'Resolution *'" :lenght="100"
@@ -107,12 +162,13 @@
       :onChange="(val) => handleInput(val, 'description')" :type="'text'" :label="'Description *'" :lenght="100"
       :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
     <br>
+    <text class="txtLabel">Categoria * </text> <br/>
     <select v-model="formDataTicket.category_id" @change="onChangeActionField($event)">
         <option :value="`Choose`">Choose the Category</option>
         <option v-for="it in list_categories" :key="it?.name" :value="`${it?.id}`">{{it?.name}}</option>
     </select>
 
-    <br>
+    <br><br>
     <my_button :type="'defaut_border'" :onPress="() => handleSaveNewTicket(actionStatus)"
       :txtBtn="'Save'" :colorStyle="'green'" :disabled="blockNext" />
     <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
@@ -139,16 +195,20 @@ export default {
                 false,
                 false,
             ],
+            commentaries: [],
             formDataCommentary: {
                 description: '',
                 id: '',
                 ticket_id: ''
             },
             formDataTicket: {
+                user_name: '',
                 title: '',
                 description: '',
                 resolution: '',
                 category_id: '',
+                category_dsc: '',
+                status_dsc: '',
                 id: ''
             },
             popupData: {
@@ -186,7 +246,22 @@ export default {
         onChangeAction(item,type) {
             const id = Number(item.id)
             const ticket = this.tickets.find(item => item.id === id)
+            if (type === 'show_ticket'){
+              console.log(ticket)
+              this.formDataTicket.user_name = ticket?.user.name
+              this.formDataTicket.category_dsc = ticket?.category.name
+              this.formDataTicket.status_dsc = ticket?.status.name
+              this.formDataTicket.description = ticket?.description
+              this.formDataTicket.resolution = ticket?.resolution
+              this.formDataTicket.title = ticket?.title
+              this.formDataTicket.user_id = ticket?.user_id
+              this.formDataTicket.category_id = ticket?.category_id
+              this.formDataTicket.ticket_status_id = ticket?.ticket_status_id
+              this.formDataTicket.id = ticket?.id
 
+              this.handleGetCommentaries(id)
+              this.actionStatus = 'show_ticket'
+            }
             if (type === 'add_comentary'){
                 this.formDataCommentary.ticket_id = id
                 this.actionStatus = 'add_comentary'
@@ -437,6 +512,10 @@ export default {
             this.formDataTicket.category_id = ''
             this.formDataTicket.title = ''
             this.formDataTicket.id = ''
+            this.formDataTicket.category_dsc = ''
+            this.formDataTicket.user_name = ''
+            this.formDataTicket.status_dsc = ''
+            this.commentaries = []
             this.formDataCommentary.ticket_id = ''
             this.formDataCommentary.description = ''
         },
@@ -465,6 +544,20 @@ export default {
             this.loading = false
             if (response) {
                 this.list_categories = response
+            }
+        },
+        async handleGetCommentaries(id) {
+            this.loading = true
+            const response = await this.commentaryService.requestGetCommentaries(id)
+            this.loading = false
+            if (response) {
+                this.commentaries = response
+                // this.formDataTickets.start_number = this.handleSequence(response.length)
+            } else {
+                this.handleModal(
+                'Something is wrong',
+                "We can't find the data."
+                )
             }
         },
         async handleGetTickets() {

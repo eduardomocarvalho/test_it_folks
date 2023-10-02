@@ -11,10 +11,10 @@ export class CommentaryService {
       }
     }
 
-    requestGetCommentaries = async () => {
+    requestGetCommentaries = async (id) => {
         let responseCommentaries = null
         try {
-          const response = await this.request.get(`${this.endpoints.commentaries_list}`)
+          const response = await this.request.get(`${this.endpoints.commentaries_list}/${id}`)
           if (response && response?.status === 200) {
             responseCommentaries = response.data
           }

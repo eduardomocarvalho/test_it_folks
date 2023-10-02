@@ -65,7 +65,7 @@
     </button>
   </div>
 
-  <button id="btn_border" v-if="type === 'defaut_border'" class="btnText" @click="onPress" :disabled="disabled">
+  <button id="btn_border" v-if="type === 'defaut_border'" class="btn" @click="onPress" :disabled="disabled">
     <div v-if="colorStyle === 'red'" class="boxBtnBorderRed">
       <text style="padding: 8px; color: #e00f0f;">{{ txtBtn }}</text>
     </div>

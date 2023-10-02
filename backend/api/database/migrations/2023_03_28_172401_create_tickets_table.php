@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('title', 60);
             $table->text('description');
-            $table->text('resolution');
+            $table->text('resolution')->nullable();
             $table->foreignIdFor(User::class)->nullable()->constrained();
             $table->foreignIdFor(Category::class)->nullable()->constrained();
             $table->foreignIdFor(TicketStatus::class)->nullable()->constrained();

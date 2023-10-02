@@ -29,7 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/close-ticket/{id}', [TicketController::class, 'close_ticket']);
     Route::put('/accept-ticket/{id}', [TicketController::class, 'accept_ticket']);
 
-    Route::get('/get-commentaries', [CommentaryController::class, 'index']);
+    Route::get('/get-commentaries/{ticket_id}', [CommentaryController::class, 'index']);
     Route::post('/save-commentary', [CommentaryController::class, 'store']);
 
     Route::get('/get-categories', [CategoryController::class, 'index']);

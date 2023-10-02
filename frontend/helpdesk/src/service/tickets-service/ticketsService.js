@@ -78,7 +78,7 @@ export class TicketsService {
             responseSaveTicket = true
           }
         } catch (error) {
-            return error
+            return false
         }
         return responseSaveTicket
       }
