@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable()->constrained();
             $table->foreignIdFor(Category::class)->nullable()->constrained();
             $table->foreignIdFor(TicketStatus::class)->nullable()->constrained();
+            $table->string('path', 60)->nullable();
+            $table->string('name_file', 60)->nullable();
 
         });
     }

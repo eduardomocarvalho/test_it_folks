@@ -24,17 +24,14 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/get-tickets', [TicketController::class, 'index']);
     Route::post('/send-ticket', [TicketController::class, 'store']);
-    Route::put('/send-ticket/{id}', [TicketController::class, 'update']);
+    Route::post('/update-ticket/{id}', [TicketController::class, 'update']);
     Route::put('/cancel-ticket/{id}', [TicketController::class, 'cancel_ticket']);
     Route::put('/close-ticket/{id}', [TicketController::class, 'close_ticket']);
     Route::put('/accept-ticket/{id}', [TicketController::class, 'accept_ticket']);
-
-    Route::get('/get-commentaries/{ticket_id}', [CommentaryController::class, 'index']);
+    Route::get('/file-download/{id}', [TicketController::class, 'file_download']);
     Route::post('/save-commentary', [CommentaryController::class, 'store']);
-
+    Route::get('/get-commentaries/{ticket_id}', [CommentaryController::class, 'index']);
     Route::get('/get-categories', [CategoryController::class, 'index']);
-
     Route::post('/register-user', [AuthController::class, 'register']);
-
     Route::post('/logout', [AuthController::class, 'logout']);
 });

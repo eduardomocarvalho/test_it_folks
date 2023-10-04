@@ -1,7 +1,7 @@
 <template>
   <div :class="row ? 'wrapperInputRow' : 'wrapperInput'">
     <div :class="row ? 'boxInputLabelRow' : 'boxInputLabel'">
-      <text class="txtLabel">{{ label }}</text>
+      <label>{{ label }}</label>
       <my_button v-if="labelRight !== undefined" :type="'defaut_text'" :onPress="clickForgot" :txtBtn="labelRight" />
     </div>
 
@@ -27,8 +27,11 @@
         <option value="field*4">Lista</option>
       </select>
 
+      <textarea v-if="type_style === 'text-area'" class="inputStyle form-control" @input="onChange" @change="onChange"
+        :value="value" :placeholder="placeholder" :type="type" :v-mask="mask" :maxlength="lenght" :max="lenght" :min="1"
+        :disabled="disabled" />
 
-      <input v-if="type_style === 'fields_defaut'" class="inputStyle" @input="onChange" @change="onChange"
+      <input v-if="type_style === 'fields_defaut'" class="inputStyle form-control" @input="onChange" @change="onChange"
         :value="value" :placeholder="placeholder" :type="type" :v-mask="mask" :maxlength="lenght" :max="lenght" :min="1"
         :disabled="disabled" />
       <text style="color: #ff1a1a; font-size: 14px;" v-if="inputError !== ''">{{ inputError }}</text>

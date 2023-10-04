@@ -19,15 +19,11 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request['name'],
             'email' => $request['email'],
+            'cpf'  => $request['email'],
             'password' => bcrypt($request['password']),
         ]);
 
-        Auth::login($user);
-        $token = $user->createToken('primeirotoken')->plainTextToken;
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+        return $user;
     }
 
     public function login(UserLoginRequest $request){
@@ -52,9 +48,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout do usuário
+     * Logout
      */
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::user()?->tokens()->delete();
 

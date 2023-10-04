@@ -1,21 +1,21 @@
-# Para subir o sistema basta seguir os seguintes passos:
+# To start the system, just follow these steps:
 
 1 - docker-compose up -d
 
-# Acessar o container do laravel (docker ps - comando para pegar o <ID_CONTAINER>):
+# You need to access the container (docker ps - command to get the id <ID_CONTAINER>):
 
 2 - docker exec -it <ID_CONTAINER> bash
-3 - composer install (Quando for a primeira vez que estiver criando o projeto)
+3 - composer install
 4 - php artisan key:generate
-5 - php artisan migrate (criação das tabelas no banco)
-6 - php artisan db:seed --class=CategorySeeder (Criar as categorias)
-7 - php artisan db:seed --class=UserSeed (Criar o usuário)
-8 - php artisan db:seed --class=TicketStatusSeeder (Criar os status dos tickets)
+5 - php artisan migrate (Create tables)
+6 - php artisan db:seed --class=CategorySeeder (Populate Category)
+7 - php artisan db:seed --class=UserSeed (Populate User)
+8 - php artisan db:seed --class=TicketStatusSeeder (Populate TicketStatus)
 
 
-# Endpoints da aplicação (arquivo json exportado do insominia na pasta storage/insomnia:
+# Endpoints (file json from insominia inside the folder storage/insomnia):
 
-1 -  http://localhost/api/login  (para acessar qualquer endpoint precisamos fazer o login e pegar o bearer gerado, as configurações já estão feitas no header Authorization dos endpoints)
+1 -  http://localhost/api/login  (We need to get to get the token using endpoint login. The configuration has been done in insomnia file through Headers -> Authorization)
 METHOD: GET 
 BODY:
 
@@ -24,9 +24,9 @@ BODY:
 	"password": "edu123"
 }
 
-2 - http://localhost/api/logout (Sair do sistema)
+2 - http://localhost/api/logout (System logout)
 
-3 - http://localhost/api/register-user (criar novos usuários)
+3 - http://localhost/api/register-user (Create new User)
 METHOD: POST
 BODY:
 
@@ -37,9 +37,46 @@ BODY:
 	"name": "edu12345"
 }
 
-4 - http://localhost/api/send-document (inserir um novo documento)
-METHOD: POST
-BODY: storage/data/2023-03-28.json (Dentro do projeto)
+4 - http://localhost/api/get-tickets (Get all tickets)
+METHOD: GET
 
-5 - http://localhost/api/get-documents (lista todos os documento inseridos)
+5 - http://localhost/api/send-ticket (Create new Ticket)
+METHOD: POST
+BODY:
+{
+	"title":"dasdasdsa",
+	"description":"dasddasd",
+	"user_id":1,
+	"category_id":1,
+	"ticket_status_id": 1
+}
+6 - http://localhost/api/update-ticket/{ticket_id}
+METHOD: POST - In this case we have to use method post becouse we can upload files
+BODY:
+{
+	"title":"dasdasdsa",
+	"description":"dasddasd",
+	"user_id":1,
+	"category_id":1,
+	"ticket_status_id": 1
+}
+7 - These endpoints change the status from the ticket:
+http://localhost/api/accept-ticket/{ticket_id}
+http://localhost/api/cancel-ticket/{ticket_id}
+http://localhost/api/close-ticket/{ticket_id}
+METHOD: PUT
+8 - http://localhost/api/file-download/{ticket_id} - Get file from one ticket
+METHOD: GET
+9 - http://localhost/api/save-commentary/ - Save new commentary
+METHOD: POST
+BODY:
+{
+	"description":"111",
+	"user_id":1,
+	"ticket_id": 36
+}
+10 - http://localhost/api/get-commentaries/{ticket_id} - Get all comentaries from the ticket
+METHOD: GET
+
+11 - http://localhost/api/get-categories - Get all categories to be inserted in to the ticket
 METHOD: GET

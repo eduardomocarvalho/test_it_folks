@@ -5,18 +5,21 @@
   <my_popup :type="'defaut_yes_no'" v-if="showPopupConfirm" :popupData="popupData" />
   <div class="headerBoxTickets">
     <text class="txtCountTickets">
-      Tickets {{ actionStatus === 'add_ticket' ? '- New Ticket' : actionStatus === 'close_ticket' ? '- Close Ticket' : actionStatus === 'edit_ticket' ? '- Edit Ticket' :'' }}
+      Tickets {{ actionStatus === 'add_ticket' ? '- New Ticket' : actionStatus === 'close_ticket' ? '- Close Ticket' : actionStatus === 'edit_ticket' ? '- Edit Ticket' : actionStatus === 'add_comentary' ? ' - New Commentary' :''}} {{ formDataTicket.id !== '' ? ' - ' +formDataTicket.id : '' }}
     </text>
     <my_button v-if="actionStatus === 'list'" :type="'defaut_plus'" :onPress="() => handleAddTickets('add_ticket')"
       :txtBtn="'New'" />
   </div>
   <div v-if="actionStatus === 'list'" style="overflow-x: hidden;
     overflow-y: auto;width: 100%; height: 70%; margin-bottom: 30px;">
-    <div v-if="tickets.length > 0" class="boxBodyTickets">
-      <table style="width: 100%;">
-        <thead style="background-color: #d6d8da">
+    <div v-if="tickets.length > 0" class="boxBodyTickets" style="justify-content: center;">
+      <table class="table" style="width: 80%;">
+        <thead class="thead-light">
           <tr>
             <th scope="col" class="styleThTickets">Actions</th>
+            <th>
+              #
+            </th>
             <th>
               Title
             </th>
@@ -35,15 +38,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr scope='row' v-for="(item, ix) in tickets" :key="ix" :class="ix % 2 === 0 ? 'styleTrTickets' : 'styleTrTicketsOne'">
+          <tr scope='row' v-for="(item, ix) in tickets" :key="ix" >
             <td class="styleTdTickets">
-              <div>
-                <button @click="onChangeAction(item,'accept')" type="button">Accept</button>
-                <button @click="onChangeAction(item,'edit')" type="button">Edit</button>
-                <button @click="onChangeAction(item,'close')" type="button">Close</button>
-                <button @click="onChangeAction(item,'cancel')" type="button">Cancel</button>
-                <button @click="onChangeAction(item,'show_ticket')" type="button">Show Ticket</button>
-                <button @click="onChangeAction(item,'add_comentary')" type="button">Add Comentary</button>
+              <div class="bd-example">
+                <button v-if="item.status.id === 1" class="btn btn-primary" @click="onChangeAction(item,'accept')" type="button">Accept</button>
+                <button v-if="item.status.id !== 3 && item.status.id !== 4" class="btn btn-secondary" @click="onChangeAction(item,'edit')" type="button">Edit</button>
+                <button class="btn btn-light" @click="onChangeAction(item,'show_ticket')" type="button">Show Ticket</button>
+                <button v-if="item.status.id !== 3 && item.status.id !== 4" class="btn btn-secondary" @click="onChangeAction(item,'add_comentary')" type="button">Add Comentary</button>
+                <button v-if="item.status.id !== 3 && item.status.id !== 4" class="btn btn-success" @click="onChangeAction(item,'close')" type="button">Close</button>
+                <button v-if="item.status.id !== 3 && item.status.id !== 4" class="btn btn-danger" @click="onChangeAction(item,'cancel')" type="button">Cancel</button>
                 <!--<select :id="`${ix}options_Tickets`" @change="onChangeAction($event)"
                   style="cursor: pointer; background-color: #ffffff; height: 30px; width: 60px; color: #1c9648; border-radius:  6px; border: 0.2px solid #1c9648; height: 30px;">
                   <option :value="`default*`">...</option>
@@ -51,6 +54,9 @@
                   <option :value="`delete*${item.id}*${ix}options_Tickets`">Delete</option>
                 </select>-->
               </div>
+            </td>
+            <td>
+              <text class="styleTxtTdTickets">{{ item.id }}</text>
             </td>
             <td>
               <text class="styleTxtTdTickets">{{ item.title }}</text>
@@ -77,14 +83,12 @@
     </div>
   </div>
   <div v-if="actionStatus === 'add_comentary'" class="boxBodyNewUser">
-    <my_input :type_style="'fields_defaut'" :value="formDataCommentary.description"
+    <my_input :type_style="'text-area'" :value="formDataCommentary.description"
       :onChange="(val) => handleInput(val, 'description')" :type="'text-area'" :label="'Description *'" :lenght="100"
       :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
       <br>
-      <my_button :type="'defaut_border'" :onPress="() => handleSaveComentary()"
-      :txtBtn="'Save'" :colorStyle="'green'" :disabled="blockNext" />
-      <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
-      :colorStyle="'red'" />
+      <button class="btn btn-primary" @click="handleSaveComentary()" type="button">Save</button>
+      <button class="btn btn-danger" @click="handleAddTickets('list')" type="button">Cancel</button>
   </div>
   <div v-if="actionStatus === 'show_ticket'" class="boxBodyNewUser">
     <form>
@@ -113,6 +117,9 @@
           </div>
         </div>
       </fieldset>
+      <div v-if="formDataTicket.path !== null"> 
+        <button class="btn btn-primary" @click="downloadFile(formDataTicket.id, formDataTicket.name_file)" type="button"> Download file </button>
+      </div>
     </form>
     <fieldset >
         <legend>Commentaries</legend>
@@ -138,42 +145,39 @@
       </table>
     </fieldset>
     <br>
-    <button type="submit" :onPress="() => handleAddTickets('list')"  class="btn btn-danger">Cancel</button>
-    <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
-      :colorStyle="'red'" />
+      <button class="btn btn-danger" @click="handleAddTickets('list')" type="button">Cancel</button>
   </div>
   <div v-if="actionStatus === 'close_ticket'" class="boxBodyNewUser">
-    <my_input :type_style="'fields_defaut'" :value="formDataTicket.resolution"
+    <my_input :type_style="'text-area'" :value="formDataTicket.resolution"
       :onChange="(val) => handleInput(val, 'resolution')" :type="'text-area'" :label="'Resolution *'" :lenght="100"
-      :inputError="errors[3] === true ? 'Preencha este campo!' : ''" />
+      :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
       <br>
-      <my_button :type="'defaut_border'" :onPress="() => handleSaveResolution()"
-      :txtBtn="'Save'" :colorStyle="'green'" :disabled="blockNext" />
-      <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
-      :colorStyle="'red'" />
+      <button class="btn btn-primary" @click="handleSaveResolution()" type="button">Save</button>
+      <button class="btn btn-danger" @click="handleAddTickets('list')" type="button">Cancel</button>
   </div>
-  <div v-if="actionStatus === 'add_ticket' || actionStatus === 'edit_ticket'" class="boxBodyNewUser">
+  <div v-if="(actionStatus === 'add_ticket' || actionStatus === 'edit_ticket')" class="boxBodyNewUser">
+
     <my_input :type_style="'fields_defaut'" :value="formDataTicket.title"
       :onChange="(val) => handleInput(val, 'title')" :type="'text'" :label="'Title *'" :lenght="100"
       :inputError="errors[1] === true ? 'Preencha este campo!' : ''" />
     <br>
     
-    <my_input :type_style="'fields_defaut'" :value="formDataTicket.description"
+    <my_input :type_style="'text-area'" :value="formDataTicket.description"
       :onChange="(val) => handleInput(val, 'description')" :type="'text'" :label="'Description *'" :lenght="100"
       :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
     <br>
-    <text class="txtLabel">Categoria * </text> <br/>
-    <select v-model="formDataTicket.category_id" @change="onChangeActionField($event)">
-        <option :value="`Choose`">Choose the Category</option>
+    <label>Categoria * </label> <br/>
+    <select :inputError="errors[2] === true ? 'Preencha este campo!' : ''"  class="form-control" v-model="formDataTicket.category_id" @change="onChangeActionField($event)">
+        <option value="">Choose the Category</option>
         <option v-for="it in list_categories" :key="it?.name" :value="`${it?.id}`">{{it?.name}}</option>
     </select>
-
+    <br>
+    <input @change="onFileChanged" type="file"/>
     <br><br>
-    <my_button :type="'defaut_border'" :onPress="() => handleSaveNewTicket(actionStatus)"
-      :txtBtn="'Save'" :colorStyle="'green'" :disabled="blockNext" />
-    <my_button :type="'defaut_border'" :onPress="() => handleAddTickets('list')" :txtBtn="'Cancel'"
-      :colorStyle="'red'" />
+      <button class="btn btn-primary border" @click="handleSaveNewTicket(actionStatus)" type="button">Save</button>
+      <button class="btn btn-danger border" @click="handleAddTickets('list')" type="button">Cancel</button>
   </div>
+
 </template>
 <script>
 import { MyButton, MyInput, MyLoading, MyPopup } from '../../components/index'
@@ -209,7 +213,10 @@ export default {
                 category_id: '',
                 category_dsc: '',
                 status_dsc: '',
-                id: ''
+                id: '',
+                path: '',
+                name_file: '',
+                file: null
             },
             popupData: {
                 txtConfirm: '',
@@ -243,11 +250,18 @@ export default {
             }
             this.actionStatus = status
         },
+        async downloadFile(ticket_id, file_name){
+            console.log(file_name)
+            this.loading = true
+            const response = await this.ticketsService.downloadFile(ticket_id,file_name)
+            this.loading = false
+        },
         onChangeAction(item,type) {
             const id = Number(item.id)
             const ticket = this.tickets.find(item => item.id === id)
             if (type === 'show_ticket'){
               console.log(ticket)
+              this.formDataTicket.name_file = ticket?.name_file
               this.formDataTicket.user_name = ticket?.user.name
               this.formDataTicket.category_dsc = ticket?.category.name
               this.formDataTicket.status_dsc = ticket?.status.name
@@ -257,6 +271,7 @@ export default {
               this.formDataTicket.user_id = ticket?.user_id
               this.formDataTicket.category_id = ticket?.category_id
               this.formDataTicket.ticket_status_id = ticket?.ticket_status_id
+              this.formDataTicket.path = ticket?.path
               this.formDataTicket.id = ticket?.id
 
               this.handleGetCommentaries(id)
@@ -406,29 +421,37 @@ export default {
             }
         },
         async handleSaveResolution(){
-            const body = {
-                description: this.formDataTicket.description,
-                title: this.formDataTicket.title,
-                category_id: Number(this.formDataTicket.category_id),
-                ticket_status_id: 3,
-                resolution: this.formDataTicket.resolution
-            }
-            this.loading = true
-            const response = await this.ticketsService.requestCloseTicket(body, this.formDataTicket.id)
-            this.loading = false
-            if (response) {
-                this.handleModal(
-                    'Close ticket',
-                    'The Ticket was closed successfully.',
-                    true
-                )
-            } else {
-                this.handleModal(
-                    'Error',
-                    'Something is wrong.'
-                )
+            let verify = this.verifyResolution()
+            if (verify) {
+                const body = {
+                    description: this.formDataTicket.description,
+                    title: this.formDataTicket.title,
+                    category_id: Number(this.formDataTicket.category_id),
+                    ticket_status_id: 3,
+                    resolution: this.formDataTicket.resolution
+                }
+                this.loading = true
+                const response = await this.ticketsService.requestCloseTicket(body, this.formDataTicket.id)
+                this.loading = false
+                if (response) {
+                    this.handleModal(
+                        'Close ticket',
+                        'The Ticket was closed successfully.',
+                        true
+                    )
+                } else {
+                    this.handleModal(
+                        'Error',
+                        'Something is wrong.'
+                    )
+                }
             }
             
+        },
+        onFileChanged(event){
+          console.log(event)
+          const files = event.target.files
+          this.formDataTicket.file = files[0]
         },
         async handleSaveNewTicket(action){
             const validFields = this.verifyFields()
@@ -437,6 +460,7 @@ export default {
                 title: this.formDataTicket.title,
                 category_id: Number(this.formDataTicket.category_id),
                 ticket_status_id: 1,
+                file: this.formDataTicket.file
             }
             if (validFields && action === 'add_ticket') {
                 this.loading = true
@@ -483,10 +507,17 @@ export default {
                 this.errors[ix] = true
                 return false
             }
-            /*if (json_columns_type.length === 0) {
-                this.errors[3] = true
+            return true
+        },
+        verifyResolution (){
+            const { resolution } = this.formDataTicket
+            const list = [resolution]
+            let ix = list.indexOf('')
+
+            if (ix > -1) {
+                this.errors[ix] = true
                 return false
-            }*/
+            }
             return true
         },
         verifyFieldsCommentary() {
@@ -498,10 +529,6 @@ export default {
                 this.errors[ix] = true
                 return false
             }
-            /*if (json_columns_type.length === 0) {
-                this.errors[3] = true
-                return false
-            }*/
             return true
         },
         handleCleanFields() {

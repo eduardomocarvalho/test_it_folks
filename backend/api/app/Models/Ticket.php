@@ -17,7 +17,9 @@ class Ticket extends Model implements Transformable
         'user_id',
         'ticket_status_id',
         'description',
-        'resolution'
+        'resolution',
+        'path',
+        'name_file'
     ];
 
     public function category() {

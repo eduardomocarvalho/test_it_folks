@@ -22,6 +22,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'cpf' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'password' => 'min:6|confirmed',
             'email' => 'required|string|max:60'

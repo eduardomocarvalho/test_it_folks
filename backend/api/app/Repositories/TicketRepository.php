@@ -7,6 +7,7 @@ use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -31,7 +32,7 @@ class TicketRepository extends BaseRepository implements RepositoryInterface
         return Ticket::class;
     }
 
-    public function create (array $attributes)
+    public function create(array $attributes)
     {
         return DB::transaction(function () use ($attributes) {
 
@@ -49,11 +50,39 @@ class TicketRepository extends BaseRepository implements RepositoryInterface
                 'ticket_status_id' => $ticket_status_id
             ];
 
-            $ticket[] = parent::create($attrs);
+            $ticket = parent::create($attrs);
 
             return $ticket;
 
         });
+    }
+
+    public function save_file($ticket, $file){
+        if (!empty($file)) {
+
+            /*$name = $file->getFilename();
+            $path = Storage::putFileAs(
+                "ticket-files/$ticket->id",
+                $file,
+                $name,
+                'public'
+            );
+
+            if (!$path) {
+                throw ValidationException::withMessages(['error' => "Problem with the attachment"]);
+            }
+
+            $originalName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();*/
+
+            $path = "ticket-files/$ticket->id";
+
+            $path = Storage::disk('local')->put($path, $file);
+
+            $ticket->path = $path;
+            $ticket->name_file = $file->getClientOriginalName();
+            $ticket->update();
+        }
     }
 
     public function update_val($id, $attributes){
@@ -67,12 +96,12 @@ class TicketRepository extends BaseRepository implements RepositoryInterface
         return $ticket;
     }
 
-    public function alter_status($id,$ticket_status_id,$resolution = ""){
+    public function alter_status($id,$ticket_status_id, $data = null){
 
         $ticket = $this->model()::where('id', $id)->first();
         $ticket->ticket_status_id = $ticket_status_id;
-        if ($ticket_status_id == 3 && !empty($resolution)){
-            $ticket->resolution = $resolution;
+        if ($ticket_status_id == 3 && !empty($data)){
+            $ticket->resolution = $data['resolution'];
         }
         $ticket->update();
 
