@@ -9,23 +9,6 @@
 
     </div> -->
     <div style="width: 100%;">
-      <select  id="profile_options" name="profile_options" v-if="type_style === 'select_profiles'"
-        @change="onChangeSelect" class="inputStyle">
-        <option value="profile*0"></option>
-        <option value="profile*1">Administrador</option>
-        <option value="profile*2">Gestor</option>
-        <option value="profile*3">Analista</option>
-        <option value="profile*4">Estagiário</option>
-      </select>
-
-      <select id="fields_options" name="fields_options" v-if="type_style === 'fields_options'" @change="onChangeSelect"
-        class="inputStyle">
-        <option value="default"></option>
-        <option value="field*1">Date</option>
-        <option value="field*2">Varchar</option>
-        <option value="field*3">Integer</option>
-        <option value="field*4">Lista</option>
-      </select>
 
       <textarea v-if="type_style === 'text-area'" class="inputStyle form-control" @input="onChange" @change="onChange"
         :value="value" :placeholder="placeholder" :type="type" :v-mask="mask" :maxlength="lenght" :max="lenght" :min="1"

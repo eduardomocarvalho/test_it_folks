@@ -30,10 +30,10 @@
               Category
             </th>
             <th scope="col" class="styleThTickets">
-                User name
+              User name
             </th>
             <th scope="col" class="styleThTickets">
-                Status
+              Status
             </th>
           </tr>
         </thead>
@@ -85,7 +85,7 @@
   <div v-if="actionStatus === 'add_comentary'" class="boxBodyNewUser">
     <my_input :type_style="'text-area'" :value="formDataCommentary.description"
       :onChange="(val) => handleInput(val, 'description')" :type="'text-area'" :label="'Description *'" :lenght="100"
-      :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
+      :inputError="errors[0] === true ? 'Required field!' : ''" />
       <br>
       <button class="btn btn-primary" @click="handleSaveComentary()" type="button">Save</button>
       <button class="btn btn-danger" @click="handleAddTickets('list')" type="button">Cancel</button>
@@ -150,7 +150,7 @@
   <div v-if="actionStatus === 'close_ticket'" class="boxBodyNewUser">
     <my_input :type_style="'text-area'" :value="formDataTicket.resolution"
       :onChange="(val) => handleInput(val, 'resolution')" :type="'text-area'" :label="'Resolution *'" :lenght="100"
-      :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
+      :inputError="errors[0] === true ? 'Required field!' : ''" />
       <br>
       <button class="btn btn-primary" @click="handleSaveResolution()" type="button">Save</button>
       <button class="btn btn-danger" @click="handleAddTickets('list')" type="button">Cancel</button>
@@ -159,15 +159,15 @@
 
     <my_input :type_style="'fields_defaut'" :value="formDataTicket.title"
       :onChange="(val) => handleInput(val, 'title')" :type="'text'" :label="'Title *'" :lenght="100"
-      :inputError="errors[1] === true ? 'Preencha este campo!' : ''" />
+      :inputError="errors[1] === true ? 'Required field!' : ''" />
     <br>
     
     <my_input :type_style="'text-area'" :value="formDataTicket.description"
       :onChange="(val) => handleInput(val, 'description')" :type="'text'" :label="'Description *'" :lenght="100"
-      :inputError="errors[0] === true ? 'Preencha este campo!' : ''" />
+      :inputError="errors[0] === true ? 'Required field!' : ''" />
     <br>
-    <label>Categoria * </label> <br/>
-    <select :inputError="errors[2] === true ? 'Preencha este campo!' : ''"  class="form-control" v-model="formDataTicket.category_id" @change="onChangeActionField($event)">
+    <label>Category * </label> <br/>
+    <select :inputError="errors[2] === true ? 'Required field!' : ''"  class="form-control" v-model="formDataTicket.category_id" @change="onChangeActionField($event)">
         <option value="">Choose the Category</option>
         <option v-for="it in list_categories" :key="it?.name" :value="`${it?.id}`">{{it?.name}}</option>
     </select>

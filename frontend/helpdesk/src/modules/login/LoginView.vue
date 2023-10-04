@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="bodyPage">
 
-      <my_loading v-if="loading" :txtLoading="'Aguarde ...'" />
+      <my_loading v-if="loading" :txtLoading="'Wait ...'" />
       <my_popup :type="'defaut_confirm'" v-if="showPopup" :popupData="popupData" />
 
       <div class="content">
@@ -13,19 +13,19 @@
 
         <div class="boxInputLogin">
           <my_input :type_style="'fields_defaut'" :value="formData.email" :onChange="(val) => handleInput(val, 'email')"
-            :type="'text'" :label="'email'" :placeholder="'Informe seu e-mail'"
-            :inputError="errors.email ? 'o campo e-mail é obrigatório' : ''" />
+            :type="'text'" :label="'email'" :placeholder="'Required'"
+            :inputError="errors.email ? 'Required' : ''" />
 
           <br>
 
           <my_input :type_style="'fields_defaut'" :value="formData.password"
-            :onChange="(val) => handleInput(val, 'password')" :type="'password'" :label="'Senha'"
-            :inputError="errors.password ? 'o campo senha é obrigatório' : ''" />
+            :onChange="(val) => handleInput(val, 'password')" :type="'password'" :label="'Password'"
+            :inputError="errors.password ? 'Required' : ''" />
           <br>
 
           <input type="checkbox" id="login_remember" name="login_remember" :value="rememberPass"
             :onchange="(val) => handleInput(val, 'rememberPass')" />
-          <text class="txtRemember">Lembrar</text>
+          <text class="txtRemember">Remember password</text>
           <br><br>
           <div style="display: flex; flex-direction: row;">
             <captcha_component style="display: flex" :value="formData.captcha" chars="12345" @getCode="getCaptchaCode"
@@ -33,10 +33,10 @@
           </div>
           <br>
           <my_input :type_style="'fields_defaut'" :value="captcha" :onChange="(val) => handleInput(val, 'captchaInput')"
-            :type="'text'" :label="'Captcha'" :placeholder="'informe o captcha'"
-            :inputError="errors.captcha ? 'o código captcha não confere' : ''" />
+            :type="'text'" :label="'Captcha'" :placeholder="'Required'"
+            :inputError="errors.captcha ? 'Captcha is wrong' : ''" />
           <br>
-          <my_button :type="'defaut_login'" :txtBtn="'Entrar'" :disabled="loading || block" :onPress="pressLogin" />
+          <my_button :type="'defaut_login'" :txtBtn="'Login'" :disabled="loading || block" :onPress="pressLogin" />
         </div>
       </div>
     </div>
@@ -142,8 +142,8 @@ export default {
         this.$router.push({ path: '/home' })
       } else {
         this.popupData = {
-          title: 'Erro No Acesso',
-          description: 'Por favor, Verifique os dados informados ou tente novamente mais tarde!',
+          title: 'Access Error',
+          description: 'Pleas, try again!',
           pathIcon: 'icons/error-icon.png',
           pressOk: () => {
             this.showPopup = false
